@@ -1,0 +1,142 @@
+import java.util.Scanner;
+
+class Dress {
+    private double price;
+
+    public void setPrice(double dressPrice) {
+        this.price = dressPrice;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void showDetails() {
+        System.out.println("Price of this dress is " + price);
+    }
+}
+
+class Shirt extends Dress {
+    private String size;
+
+    public Shirt(String size) {
+        this.size = size;
+    }
+
+    public void showDetails() {
+        System.out.println("This is a Shirt and size : " + size);
+        System.out.println("Price of this dress is " + getPrice());
+    }
+}
+
+class Trouser extends Dress {
+    private String length;
+
+    public Trouser(String dressLength) {
+        this.length = dressLength;
+    }
+
+    public void showDetails() {
+        System.out.println("This is a Trouser and size : " + length);
+        System.out.println("Price of this dress is " + getPrice());
+    }
+}
+
+class Person {
+    private double budget;
+    private int noOfItems;
+    private Dress[] dressArray;
+
+    public Person(double budget, int maxItems) {
+        this.budget = budget;
+        this.dressArray = new Dress[maxItems];
+    }
+
+    public void addItem(Dress dress) {
+        if (noOfItems < dressArray.length) {
+            dressArray[noOfItems] = dress;
+            noOfItems++;
+        }
+    }
+
+    public void setPriceForItem(int itemIndex, double price) {
+        if (itemIndex >= 0 && itemIndex < noOfItems) {
+            dressArray[itemIndex].setPrice(price);
+        }
+    }
+
+    public void showDetails() {
+        double total = 0;
+
+        System.out.println("---------Details of the Person is as follows---------");
+        System.out.println("Budget of the person: " + budget);
+
+        for (int i = 0; i < noOfItems; i++) {
+            dressArray[i].showDetails();
+            total += dressArray[i].getPrice();
+        }
+
+        if (total > budget) {
+            System.out.println("This is over budgeted person");
+        } else if (budget > total) {
+            System.out.println("This is low budgeted person");
+        } else {
+            System.out.println("This is a balanced budget person");
+        }
+    }
+}
+
+public class Demo {
+    public static void main(String[] args) {
+        double budget;
+        int maxItems;
+        char itemType;
+        double price;
+        String sizeOrLength;
+        int itemNumber = 1;
+        boolean state = true;
+
+        Scanner input = new Scanner(System.in);
+
+        System.out.print("Enter budget for new Person: ");
+        budget = input.nextDouble();
+
+        System.out.print("Enter no of dresses to this Person: ");
+        maxItems = input.nextInt();
+
+        Person p1 = new Person(budget, maxItems);
+
+        while (state && itemNumber <= maxItems) {
+            System.out.println("Item No " + itemNumber);
+            System.out.print("Enter type of dress ('s' for shirt and 't' for trouser): ");
+            itemType = input.next().charAt(0);
+
+            if (itemType == 's') {
+                System.out.print("Enter price for new Shirt: ");
+                price = input.nextDouble();
+                System.out.print("Enter size for the Shirt: ");
+                sizeOrLength = input.next();
+                Shirt shirt = new Shirt(sizeOrLength);
+                p1.addItem(shirt);
+                p1.setPriceForItem(itemNumber - 1, price);
+            } else if (itemType == 't') {
+                System.out.print("Enter price for new Trouser: ");
+                price = input.nextDouble();
+                System.out.print("Enter length for the Trouser: ");
+                sizeOrLength = input.next();
+                Trouser trouser = new Trouser(sizeOrLength);
+                p1.addItem(trouser);
+                p1.setPriceForItem(itemNumber - 1, price);
+            } else {
+                System.out.println("Invalid choice please re-enter");
+                continue;
+            }
+
+            itemNumber++;
+        }
+
+        input.close();
+
+        p1.showDetails();
+    }
+}
